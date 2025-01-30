@@ -87,7 +87,9 @@ if uploaded_files:
         
         if file_name not in progress:
             progress[file_name] = {}
-        
+
+        if "finalizado" in progress[file_name]:
+            continue
         with st.expander(f"Arquivo: {file_name}"):
             # Paginação dos registros
             num_registros = len(matricula.registros)
@@ -102,20 +104,21 @@ if uploaded_files:
                 st.session_state[f"pagina_idx_{file_name}"] = 0
             pagina_idx = st.session_state.get(f"pagina_idx_{file_name}", 0)
             cont = st.container()
+            col1, col2, col3 = st.columns([1, 2, 1])
+
             if num_paginas > 1:
-                col1, col2, col3, col4 = st.columns([1, 2, 1, 1])
-                with col1:
-                    if st.button("Página Anterior", key=f"prev_page_{file_name}"):
-                        pagina_idx = max(pagina_idx - 1, 0)
                 with col2:
-                    st.write(f"Página {pagina_idx + 1} de {num_paginas}")
+                    if st.button("Página Anterior", key=f"prev_page_{file_name}"):
+                        st.session_state[f"pagina_idx_{file_name}"] = max(0, pagina_idx - 1)
+                        pagina_idx = max(0, pagina_idx - 1)
                 with col3:
                     if st.button("Próxima Página", key=f"next_page_{file_name}"):
-                        pagina_idx = min(pagina_idx + 1, num_paginas - 1)
-                with col4:
-                    if st.button("Finalizar Arquivo", key=f"finalizar_{file_name}"):
-                        progress[file_name]["finalizado"] = True
-                        st.success(f"Arquivo {file_name} finalizado!")
+                        st.session_state[f"pagina_idx_{file_name}"] = min(num_paginas - 1, pagina_idx + 1)
+                        pagina_idx = min(num_paginas - 1, pagina_idx + 1)
+
+                with col1:
+                    st.write(f"Página {st.session_state[f'pagina_idx_{file_name}'] + 1} de {num_paginas}")
+
             else:
                 pagina_idx = 0
 
