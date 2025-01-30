@@ -1,4 +1,4 @@
-json
 streamlit
 pydantic
+json
 pathlib
