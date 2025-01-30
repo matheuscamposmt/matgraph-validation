@@ -1,0 +1,4 @@
+json
+streamlit
+pydantic
+pathlib
